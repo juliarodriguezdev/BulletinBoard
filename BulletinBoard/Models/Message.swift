@@ -11,23 +11,16 @@ import CloudKit
 
 class Message {
     
-    // keys for CloudKiy Storage, same value as Class
-    // static - accesible everywhere
-    static let typeKey = "Message"
-    // private doesnt allow to be accessed, cannot acces properties
-    private let textKey = "Text"
-    private let timestampKey = "Timestamp"
-    
     // class properties
     let text: String
     let timestamp: Date
     
     var cloudKitRecord: CKRecord {
         // Defin the record type
-        let record = CKRecord(recordType: Message.typeKey)
+        let record = CKRecord(recordType: MessageConstants.typeKey)
         // Set your key value pairs
-        record.setValue(text, forKey: textKey)
-        record.setValue(timestamp, forKey: timestampKey)
+        record.setValue(text, forKey: MessageConstants.textKey)
+        record.setValue(timestamp, forKey: MessageConstants.timestampKey)
         // return the record
         return record
     }
@@ -42,12 +35,30 @@ class Message {
     // failable init to pass in CKRecord
     init?(record: CKRecord) {
         // guard against keys
-        guard let text = record[textKey] as? String,
-        let timestamp = record[timestampKey] as? Date
+        guard let text = record[MessageConstants.textKey] as? String,
+        let timestamp = record[MessageConstants.timestampKey] as? Date
             else { return nil }
         // set values for model properties
         self.text = text
         self.timestamp = timestamp
     }
     
+}
+
+// step 1 - to delete messages
+extension Message: Equatable {
+    static func == (lhs: Message, rhs: Message) -> Bool {
+        return lhs.text == rhs.text && lhs.timestamp == rhs.timestamp
+    }
+}
+
+struct MessageConstants {
+    
+    // keys for CloudKiy Storage, same value as Class
+    // static - accesible everywhere
+    static let typeKey = "Message"
+    // private doesnt allow to be accessed, cannot acces properties
+    // fileprivate: only use in this file
+    fileprivate static let textKey = "Text"
+    fileprivate static let timestampKey = "Timestamp"
 }

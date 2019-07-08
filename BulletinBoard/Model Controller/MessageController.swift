@@ -13,8 +13,15 @@ class MessageController {
     // shared instance: singleton
     static let sharedInstance = MessageController()
     
+    let messagesWereUpdatedNotification = Notification.Name("messagesWereUpdated")
+    
     // source of truth
-    var messages: [Message] = []
+    var messages: [Message] = [] {
+        didSet {
+            // Post a notification
+            NotificationCenter.default.post(name: messagesWereUpdatedNotification, object: nil)
+        }
+    }
     
     // MARK: - CRUD
     // Create
@@ -37,7 +44,7 @@ class MessageController {
     // Read
     func fetchMessageRecords() {
         let database = CloudKitController.sharedInstance.publicDatabase
-        CloudKitController.sharedInstance.fetchRecordsOf(type: Message.typeKey, database: database) { (records, error) in
+        CloudKitController.sharedInstance.fetchRecordsOf(type: MessageConstants.typeKey, database: database) { (records, error) in
             
             // handle error
             if let error = error {
@@ -54,4 +61,19 @@ class MessageController {
             self.messages = messages
         }
     }
+    
+    // Delete
+  /*  func deleteMessageRecords(_ text: String) {
+        let messageToDelete = Message(text: text)
+        let database = CloudKitController.sharedInstance.publicDatabase
+        
+        CloudKitController.sharedInstance.recordToDelete(record: messageToDelete.cloudKitRecord, database: database) { (success) in
+            if success {
+                print("Successfully deleted message from CloudKit")
+                self.messages.remove(at: messageToDelete.cloudKitRecord.)
+            }
+            
+        }
+        
+    } */
 }
