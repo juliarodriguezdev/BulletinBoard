@@ -45,7 +45,7 @@ class Message {
         guard let text = record[textKey] as? String,
         let timestamp = record[timestampKey] as? Date
             else { return nil }
-        // set values for model properties 
+        // set values for model properties
         self.text = text
         self.timestamp = timestamp
     }
